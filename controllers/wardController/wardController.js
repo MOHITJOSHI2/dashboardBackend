@@ -1,4 +1,4 @@
-const Ward = require("../models/Ward");
+const Ward = require("../../models/wardModel/wardModel");
 
 exports.getWards = async (req, res) => {
     try {
