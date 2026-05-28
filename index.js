@@ -5,6 +5,10 @@ db()
 const saveData = require('./routes/operatorsRoutes/saveDataRoute')
 const getData = require('./routes/operatorsRoutes/getDataRoute')
 
+//Ward coordinates
+const getWards = require('./routes/wardRoutes/wardRoutes')
+
+
 // Library imports
 const express = require('express')
 const cors = require('cors')
@@ -15,15 +19,18 @@ const app = express()
 
 //Server modifications
 app.use(cors({
-    origin:[ 
-    'http://localhost:5173',
-    'http://localhost:3001'
+    origin: [
+        'http://localhost:5173',
+        'http://localhost:3001'
     ]
 }))
 app.use(express.json())
 
-//Routes
+//Operator Routes
 app.use('/data', saveData, getData)
+
+//Wards Routes
+app.use('/ward', getWards)
 
 //Server Running
 app.listen(process.env.PORT, () => {
