@@ -15,7 +15,10 @@ const app = express()
 
 //Server modifications
 app.use(cors({
-    origin: 'http://localhost:5173'
+    origin:[ 
+    'http://localhost:5173',
+    'http://localhost:3001'
+    ]
 }))
 app.use(express.json())
 
