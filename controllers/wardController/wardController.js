@@ -13,19 +13,19 @@ exports.getWards = async (req, res) => {
 
         // Province
         if (province) {
-            query["Properties.STATE_CODE"] = province;
+            query["properties.STATE_CODE"] = province;
         }
 
         // District
         if (district) {
-            query["Properties.DISTRICT"] = {
+            query["properties.DISTRICT"] = {
                 $regex: `^${district}$`,
                 $options: "i",
             };
         }
 
         if (municipality) {
-            query["Properties.GaPa_NaPa"] = {
+            query["properties.GaPa_NaPa"] = {
                 $regex: `^${municipality}$`,
                 $options: "i",
             };
@@ -33,7 +33,7 @@ exports.getWards = async (req, res) => {
 
         // Wards array [1,2,3]
         if (wards && wards.length > 0) {
-            query["Properties.NEW_WARD_N"] = {
+            query["properties.NEW_WARD_N"] = {
                 $in: wards,
             };
         }
