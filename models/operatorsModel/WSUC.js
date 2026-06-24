@@ -30,6 +30,44 @@ const wsucSchema = new mongoose.Schema({
         CWPI_Interpretation: { type: String },
         Type_A_to_D: { type: String },
     },
+
+    Master_Sheet: {
+        HH_Served: { type: Number },
+        Total_HH: { type: Number },
+        Coverage_Pct: { type: Number },
+        Coverage_Score: { type: Number },
+        Scheme_Type: { type: String },
+        Billed_Volume: { type: String },
+        Population_Served: { type: Number },
+        Actual_LPCD: { type: Number },
+        Target_LPCD: { type: Number },
+        WQ_Testing: { type: String },
+        WQ_EColi: { type: String },
+        WQ_Arsenic: { type: String },
+        Hours_of_Supply: { type: Number },
+        NRW_Logbook: { type: String },
+        NRW_Flow_Measurement: { type: String },
+        NRW_Reservoir_Scale: { type: String },
+        NRW_Flow_Meters: { type: String },
+        NRW_DMA: { type: String },
+        Expenditure: { type: Number },
+        Income: { type: Number },
+        Operating_Ratio: { type: Number },
+        Metered_Connections: { type: Number },
+        Total_Connections: { type: Number },
+        Metering_Pct: { type: Number },
+        Grievance_Logbook: { type: String },
+        Grievance_Mechanism: { type: String },
+        Category_Number: { type: String },
+        Category_Level: { type: String },
+        Project_Status: { type: String }
+    },
+
+    Documents: {
+        type: Array,
+    }
+
+
 })
 
 module.exports = mongoose.model('WSUC', wsucSchema)

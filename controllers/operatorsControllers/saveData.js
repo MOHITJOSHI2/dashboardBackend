@@ -8,30 +8,17 @@ const saveData = async (req, res) => {
 
         const data = Object.values(getData)
 
-        // Get last WSUC_ID
-        const lastEntry = await WSUC.findOne().sort({ WSUC_ID: -1 })
+        // Delete previous data
+        await WSUC.deleteMany()
 
-        let lastID = 0
-        if (lastEntry) {
-            lastID = lastEntry.WSUC_ID
-        }
-
-        // Filter only new records
-        const newData = data.filter(row => row.WSUC_ID > lastID)
-
-        if (newData.length === 0) {
-            return res.json({
-                message: "No new data to insert"
-            })
-        }
         // Insert into database 
-        await WSUC.insertMany(newData)
+        await WSUC.insertMany(data)
 
         console.log("Data Inserted Successfully")
 
         res.json({
             message: "New data inserted",
-            inserted: newData.length
+            inserted: data.length
         })
 
     } catch (error) {

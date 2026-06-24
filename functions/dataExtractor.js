@@ -4,7 +4,7 @@ const path = require("path")
 
 const extractData = () => {
 
-    const filePath = path.join(__dirname, '../DWSSM_KPI_GIS_Ready .xlsx')
+    const filePath = "/home/spyner/projects/dashboardBackend/data/DWSSM_KPI_GIS_Ready.xlsx"
     const workbook = xlsx.readFile(filePath)
 
     let WSUCData = {}
@@ -47,7 +47,7 @@ const extractData = () => {
     // A5 → A72 (WSUC IDs)
     const idRange = {
         s: { r: 4, c: 0 },
-        e: { r: 78, c: 0 }
+        e: { r: 116, c: 0 }
     }
 
     const ids = xlsx.utils.sheet_to_json(Summary_Index_Sheet, {
@@ -97,6 +97,75 @@ const extractData = () => {
             }
         }
     })
+
+    // MasterSheet
+    const MasterSheet_Sheet = workbook.Sheets['Mastersheet'];
+    const MasterSheet_Data = xlsx.utils.sheet_to_json(MasterSheet_Sheet, {
+        defval: null
+    });
+
+    MasterSheet_Data.forEach((row) => {
+        const wsucId = row.WSUC_ID;
+
+        if (WSUCData[wsucId]) {
+            WSUCData[wsucId].MasterSheet = {
+                HH_Served: cleanNumber(row.HH_Served),
+                Total_HH: cleanNumber(row.Total_HH),
+                Coverage_Pct: cleanNumber(row.Coverage_Pct),
+                Coverage_Score: cleanNumber(row.Coverage_Score),
+
+                Scheme_Type: row.Scheme_Type || null,
+
+                Billed_Volume:
+                    row.Billed_Volume !== null &&
+                        row.Billed_Volume !== undefined &&
+                        row.Billed_Volume !== ""
+                        ? String(row.Billed_Volume)
+                        : null,
+
+                Population_Served: cleanNumber(row.Population_Served),
+                Actual_LPCD: cleanNumber(row.Actual_LPCD),
+                Target_LPCD: cleanNumber(row.Target_LPCD),
+
+                WQ_Testing: row.WQ_Testing || null,
+                WQ_EColi: row.WQ_EColi || null,
+                WQ_Arsenic: row.WQ_Arsenic || null,
+
+                Hours_of_Supply: cleanNumber(row.Hours_of_Supply),
+
+                NRW_Logbook: row.NRW_Logbook || null,
+                NRW_Flow_Measurement: row.NRW_Flow_Measurement || null,
+                NRW_Reservoir_Scale: row.NRW_Reservoir_Scale || null,
+                NRW_Flow_Meters: row.NRW_Flow_Meters || null,
+                NRW_DMA: row.NRW_DMA || null,
+
+                Expenditure: cleanNumber(row.Expenditure),
+                Income: cleanNumber(row.Income),
+                Operating_Ratio: cleanNumber(row.Operating_Ratio),
+
+                Metered_Connections: cleanNumber(row.Metered_Connections),
+                Total_Connections: cleanNumber(row.Total_Connections),
+                Metering_Pct: cleanNumber(row.Metering_Pct),
+
+                Grievance_Logbook: row.Grievance_Logbook || null,
+                Grievance_Mechanism: row.Grievance_Mechanism || null,
+
+                Category_Number:
+                    row.Category_Number !== null &&
+                        row.Category_Number !== undefined &&
+                        row.Category_Number !== ""
+                        ? String(row.Category_Number)
+                        : null,
+
+                Category_Level: row.Category_Level || null,
+
+                Project_Status:
+                    row["Project Status"]?.trim() ||
+                    row.Project_Status?.trim() ||
+                    null
+            };
+        }
+    });
 
     return WSUCData
 }

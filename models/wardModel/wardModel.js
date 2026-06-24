@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const wardSchema = new mongoose.Schema(
     {
-        type: {
+        Type: {
             type: String,
             default: "Feature",
         },
 
-        properties: {
+        Properties: {
             OBJECTID: Number,
 
             DISTRICT: String,
@@ -25,7 +25,7 @@ const wardSchema = new mongoose.Schema(
             join_key: String,
         },
 
-        geometry: {
+        Geometry: {
             type: {
                 type: String,
                 enum: ["Polygon", "MultiPolygon"],

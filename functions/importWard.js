@@ -1,18 +1,27 @@
 const fs = require("fs");
 const mongoose = require("mongoose");
 const Ward = require("../models/wardModel/wardModel");
-require('dotenv').config({ quite: true })
+require('dotenv').config({ quiet: true })
 
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect("mongodb+srv://mohitjoshi5523_db_user:9868708712@cluster0.1tjokse.mongodb.net/qgis?appName=Cluster0");
 
 async function importGeoJSON() {
     const data = JSON.parse(
         fs.readFileSync("../data/ward_base.geojson", "utf-8")
     );
 
+    const validFeatures = data.features.filter(
+        (f) =>
+            f.geometry &&
+            ["Polygon", "MultiPolygon"].includes(f.geometry.type) &&
+            f.geometry.coordinates
+    );
+
+    console.log(`Total features: ${data.features.length}, valid: ${validFeatures.length}, skipped: ${data.features.length - validFeatures.length}`);
+
     await Ward.deleteMany();
 
-    await Ward.insertMany(data.features);
+    await Ward.insertMany(validFeatures, { ordered: false });
 
     console.log("Imported Successfully");
 
