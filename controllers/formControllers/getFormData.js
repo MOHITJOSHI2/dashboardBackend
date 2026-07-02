@@ -12,7 +12,7 @@ const getFormData = async (req, res) => {
 
     try {
         const getFormData = await temporaryFormData.find()
-        res.json({ getFormData })
+        res.status(200).json({ message: getFormData })
 
     } catch (error) {
         console.log("Error at getFormData\n", error)
