@@ -8,15 +8,15 @@ exports.uploadFile = async (req, res) => {
         // Access Location Data
         const { province, district, municipality, wardsCovered, latitude, longitude, service_coverage, adequacy, water_quality, reliability, non_revenue_water, operating_ratio, metering_ratio, grievances_addressal } = req?.body
 
-        // Access uploaded files
-        const documents = req.files.map(file => ({
-            originalName: file.originalname,
-            fileName: file.filename,
-            mimeType: file.mimetype,
-            size: file.size,
-            relativePath: `${req.uploadFolder}/${file.filename}`,
-            uploadedAt: new Date()
-        }));
+        // // Access uploaded files
+        // const documents = req.files.map(file => ({
+        //     originalName: file.originalname,
+        //     fileName: file.filename,
+        //     mimeType: file.mimetype,
+        //     size: file.size,
+        //     relativePath: `${req.uploadFolder}/${file.filename}`,
+        //     uploadedAt: new Date()
+        // }));
 
         const operatorData = {
             WSUC_Name: wsucName,
@@ -120,7 +120,7 @@ exports.uploadFile = async (req, res) => {
             },
 
             //All the affiliated data files related to the projects
-            Documents: documents
+            Documents: []
         }
 
         const saveData = await temporaryFormData.insertOne(operatorData)

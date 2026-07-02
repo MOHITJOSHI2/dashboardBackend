@@ -7,8 +7,12 @@ const {
 
 const router = express.Router();
 
+// router.post(
+//     "/upload", uploadMiddleware, uploadFile
+// );
+
 router.post(
-    "/upload", uploadMiddleware, uploadFile
+    "/upload", uploadFile
 );
 
 module.exports = router;
