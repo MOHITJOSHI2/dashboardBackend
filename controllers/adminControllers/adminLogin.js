@@ -21,7 +21,8 @@ const adminLogin = async (req, res) => {
                 res.cookie('admin', jwtToken, {
                     maxAge: 1000 * 60 * 60 * 24,
                     httpOnly: true,
-                    secure: true
+                    secure: true,
+                    sameSite: "none"
                 })
                 return res.status(200).json({ message: "Admin logged in successfully" })
 
