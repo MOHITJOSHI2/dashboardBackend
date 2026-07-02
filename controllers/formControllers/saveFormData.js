@@ -3,10 +3,10 @@ const temporaryFormData = require("../../models/formModel/temporaryFormModel");
 exports.uploadFile = async (req, res) => {
     try {
         //Access Service Provider Details
-        const { name, email, phone, designation, wsucName } = req.body;
+        const { name, email, phone, designation, wsucName } = req?.body;
 
         // Access Location Data
-        const { province, district, municipality, wardsCovered, latitude, longitude, service_coverage, adequacy, water_quality, reliability, non_revenue_water, operating_ratio, metering_ratio, grievances_addressal } = req.body
+        const { province, district, municipality, wardsCovered, latitude, longitude, service_coverage, adequacy, water_quality, reliability, non_revenue_water, operating_ratio, metering_ratio, grievances_addressal } = req?.body
 
         // Access uploaded files
         const documents = req.files.map(file => ({
@@ -127,7 +127,6 @@ exports.uploadFile = async (req, res) => {
         console.log("success")
 
     } catch (error) {
-        console.error(error);
         res.status(500).json({
             success: false,
             message: "Server error"
