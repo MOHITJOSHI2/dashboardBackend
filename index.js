@@ -21,6 +21,8 @@ const getFormData = require('./routes/formRoutes/protectedGetFormDataRoutes')
 const adminLogin = require('./routes/adminRoutes/adminLoginRoutes')
 const addAdmin = require('./routes/adminRoutes/addAdminRoute')
 
+const formApproval = require('./routes/adminRoutes/formApprovalRoutes/formApprovalRoute')
+
 // Library imports
 const express = require('express')
 const cors = require('cors')
@@ -52,7 +54,7 @@ app.use('/ward', getWards)
 //Save formData Routes
 app.use('/form', saveFormData)
 
-//Admin accessible form getData routes
+//Admin accessible route to fetch unapproved form Data
 app.use('/form', authenticateUsers, getFormData)
 
 //Admin Login Route
@@ -60,6 +62,10 @@ app.use('/auth', adminLogin)
 
 //Add admin route
 app.use('/admin', addAdmin)
+
+//Admin Approval or Reject form Data
+app.use('/admin', formApproval)
+
 
 //Server Running
 app.listen(process.env.PORT, () => {

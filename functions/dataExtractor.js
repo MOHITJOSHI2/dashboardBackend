@@ -4,7 +4,7 @@ const path = require("path")
 
 const extractData = () => {
 
-    const filePath = "/home/spyner/projects/dashboardBackend/data/DWSSM_KPI_GIS_Ready.xlsx"
+    const filePath = "/home/spyner/projects/dashboardBackend/data/DWSSM_KPI_GIS_Ready_complete.xlsx"
     const workbook = xlsx.readFile(filePath)
 
     let WSUCData = {}

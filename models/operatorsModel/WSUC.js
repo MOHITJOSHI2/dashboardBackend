@@ -63,6 +63,17 @@ const wsucSchema = new mongoose.Schema({
         Project_Status: { type: String }
     },
 
+    geometry: {
+        type: {
+            type: String,
+            enum: ["Polygon", "MultiPolygon"]
+        },
+
+        coordinates: {
+            type: Array
+        },
+    },
+
     Documents: {
         type: Array,
     }
