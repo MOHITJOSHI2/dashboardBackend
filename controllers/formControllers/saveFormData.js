@@ -6,7 +6,11 @@ exports.uploadFile = async (req, res) => {
         const { name, email, phone, designation, wsucName } = req?.body;
 
         // Access Location Data
-        const { province, district, municipality, wardsCovered, latitude, longitude, service_coverage, adequacy, water_quality, reliability, non_revenue_water, operating_ratio, metering_ratio, grievances_addressal } = req?.body
+        const { province, district, municipality, wardsCovered, latitude, longitude } = req?.body
+
+        let {
+            service_coverage = {}, adequacy = {}, water_quality = {}, reliability = {}, non_revenue_water = {}, operating_ratio = {}, metering_ratio = {}, grievances_addressal = {}
+        } = req.body
 
         // // Access uploaded files
         // const documents = req.files.map(file => ({
