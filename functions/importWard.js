@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Ward = require("../models/wardModel/wardModel");
 require('dotenv').config({ quiet: true })
 
-mongoose.connect("mongodb+srv://mohitjoshi5523_db_user:9868708712@cluster0.1tjokse.mongodb.net/qgis?appName=Cluster0");
+mongoose.connect();
 
 async function importGeoJSON() {
     const data = JSON.parse(
