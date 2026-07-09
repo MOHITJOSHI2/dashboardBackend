@@ -11,12 +11,10 @@ exports.getWards = async (req, res) => {
 
         let query = {};
 
-        // Province
         if (province) {
             query["properties.STATE_CODE"] = province;
         }
 
-        // District
         if (district) {
             query["properties.DISTRICT"] = {
                 $regex: `^${district}$`,
@@ -31,12 +29,15 @@ exports.getWards = async (req, res) => {
             };
         }
 
-        // Wards array [1,2,3]
-        if (wards && wards.length > 0) {
-            query["properties.NEW_WARD_N"] = {
-                $in: wards,
-            };
+        // Require wards explicitly — return empty if not provided
+        if (!wards || wards.length === 0) {
+            return res.status(200).json({
+                type: "FeatureCollection",
+                features: [],
+            });
         }
+
+        query["properties.NEW_WARD_N"] = { $in: wards };
 
         const wardData = await Ward.find(query);
 
