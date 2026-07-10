@@ -67,6 +67,9 @@ exports.uploadFile = async (req, res) => {
         const metering_ratio = safeParse(req.body.metering_ratio);
         const grievances_addressal = safeParse(req.body.grievances_addressal);
 
+        //Geometry parsing
+        const geometryParsed = JOSN.parse(geometry)
+
         const operatorData = {
             WSUC_Name: wsucName,
 
