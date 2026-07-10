@@ -111,7 +111,26 @@ const temporaryFormSchema = new mongoose.Schema({
     },
 
     Documents: {
-        type: Array,
+        Business_Plan: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        },
+        Lab_Report: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        },
+        Logbook_For_Pumping_Hours: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        },
+        Annual_Audit_Report: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        },
+        Logbook_For_Consumer_complaint: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        }
     }
 
 

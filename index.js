@@ -18,10 +18,19 @@ const saveFormData = require('./routes/formRoutes/saveFormDataRoute')
 const getFormData = require('./routes/formRoutes/protectedGetFormDataRoutes')
 
 //Admin operations
-const adminLogin = require('./routes/adminRoutes/adminLoginRoutes')
-const addAdmin = require('./routes/adminRoutes/addAdminRoute')
+const adminLogin = require('./routes/adminRoutes/adminOperations/adminLoginRoutes')
+const adminLogout = require('./routes/adminRoutes/adminOperations/adminLoginRoutes')
+const addAdmin = require('./routes/adminRoutes/adminOperations/addAdminRoute')
 
+
+//Form reject or accept routes
 const formApproval = require('./routes/adminRoutes/formApprovalRoutes/formApprovalRoute')
+
+
+/* ******************************** */
+//Ai
+// const ai = require('./ai/aiRoutes')
+
 
 // Library imports
 const express = require('express')
@@ -58,13 +67,17 @@ app.use('/form', saveFormData)
 app.use('/form', authenticateUsers, getFormData)
 
 //Admin Login Route
-app.use('/auth', adminLogin)
+app.use('/auth', adminLogin, adminLogout)
 
 //Add admin route
 app.use('/admin', addAdmin)
 
 //Admin Approval or Reject form Data
 app.use('/admin', formApproval)
+
+/* ******************************** */
+//AI
+// app.use('/ai', ai)
 
 
 //Server Running

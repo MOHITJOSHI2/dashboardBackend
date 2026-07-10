@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 
         const uploadPath = path.join(
             __dirname,
-            "../storage",
+            "../../storage",
             year.toString(),
             month
         );
@@ -56,21 +56,19 @@ const upload = multer({
 });
 
 const uploadMiddleware = (req, res, next) => {
-    upload.array("documents", 10)(req, res, (err) => {
+    upload.fields([
+        { name: "Business_Plan", maxCount: 1 },
+        { name: "Lab_Report", maxCount: 1 },
+        { name: "Logbook_For_Pumping_Hours", maxCount: 1 },
+        { name: "Annual_Audit_Report", maxCount: 1 },
+        { name: "Logbook_For_Consumer_complaint", maxCount: 1 }
+    ])(req, res, (err) => {
         if (err instanceof multer.MulterError) {
-            return res.status(400).json({
-                success: false,
-                message: err.message
-            });
+            return res.status(400).json({ success: false, message: err.message });
         }
-
         if (err) {
-            return res.status(400).json({
-                success: false,
-                message: err.message
-            });
+            return res.status(400).json({ success: false, message: err.message });
         }
-
         next();
     });
 };

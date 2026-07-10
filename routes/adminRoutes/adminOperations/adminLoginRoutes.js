@@ -1,7 +1,8 @@
 //Routes for admin Login
 const express = require("express");
 
-const { adminLogin, logout } = require('../../controllers/adminControllers/adminLogin')
+const { logout } = require('../../../controllers/adminControllers/adminOperations/adminLogout')
+const { adminLogin } = require('../../../controllers/adminControllers/adminOperations/adminLogin')
 
 const router = express.Router();
 

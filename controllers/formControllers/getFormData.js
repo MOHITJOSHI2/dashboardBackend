@@ -1,14 +1,7 @@
 const path = require("path");
 const temporaryFormData = require("../../models/formModel/temporaryFormModel");
 
-const STORAGE_ROOT = path.join(__dirname, "../storage");
-
 const getFormData = async (req, res) => {
-    //Full path to view and download the files
-    // const fullPath = path.join(
-    //     STORAGE_ROOT,
-    //     document.relativePath
-    // );
 
     try {
         const getFormData = await temporaryFormData.find()
@@ -21,6 +14,8 @@ const getFormData = async (req, res) => {
 
 }
 
+
+// Get a single user document
 const getSingleUserData = async (req, res) => {
     try {
         const userId = req?.params?.id;
@@ -39,6 +34,8 @@ const getSingleUserData = async (req, res) => {
         res.status(500).json({ err: error })
     }
 }
+
+
 
 module.exports = {
     getFormData,

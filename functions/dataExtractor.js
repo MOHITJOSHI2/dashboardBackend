@@ -108,7 +108,7 @@ const extractData = () => {
         const wsucId = row.WSUC_ID;
 
         if (WSUCData[wsucId]) {
-            WSUCData[wsucId].MasterSheet = {
+            WSUCData[wsucId].Master_Sheet = {
                 HH_Served: cleanNumber(row.HH_Served),
                 Total_HH: cleanNumber(row.Total_HH),
                 Coverage_Pct: cleanNumber(row.Coverage_Pct),

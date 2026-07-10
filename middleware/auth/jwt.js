@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
-require('dotenv').config({ quiet: true })
+const path = require('path')
+require('dotenv').config({ quiet: true, path: path.resolve('../../', '.env') })
 
 const authenticateUsers = (req, res, next) => {
     try {

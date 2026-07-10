@@ -26,9 +26,6 @@ const wsucSchema = new mongoose.Schema({
         Grievance_Score: { type: Number },
         SPI: { type: Number },
         OEI: { type: Number },
-        CWPI_Percentage: { type: Number },
-        CWPI_Interpretation: { type: String },
-        Type_A_to_D: { type: String },
     },
 
     Master_Sheet: {
@@ -64,18 +61,32 @@ const wsucSchema = new mongoose.Schema({
     },
 
     geometry: {
-        type: {
-            type: String,
-            enum: ["Polygon", "MultiPolygon"]
-        },
-
-        coordinates: {
-            type: Array
-        },
+        lat: { type: Number },
+        lng: { type: Number }
     },
 
+
     Documents: {
-        type: Array,
+        Business_Plan: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        },
+        Lab_Report: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        },
+        Logbook_For_Pumping_Hours: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        },
+        Annual_Audit_Report: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        },
+        Logbook_For_Consumer_complaint: {
+            name: { type: String, default: null },
+            path: { type: String, default: null }
+        }
     }
 
 
