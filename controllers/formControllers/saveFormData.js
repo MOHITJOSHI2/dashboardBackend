@@ -163,7 +163,7 @@ exports.uploadFile = async (req, res) => {
 
             geometry: {
                 coordinates: {
-                    geometry
+                    geometryParsed
                 },
             },
 
