@@ -12,6 +12,8 @@ const {
     waterQualityScore
 } = require('../../../functions/operationalIndicators/operationIndicatorsCalculation')
 
+const ADMINNAME = 'Service Regulation and Information Management Section'
+
 // Function to calculate all indicator scores
 const getCalculatedValues = (formData) => {
 
@@ -74,6 +76,7 @@ const getCalculatedValues = (formData) => {
 const approveFormData = async (req, res) => {
     try {
         const { id } = req.params;
+        const { userEmail } = req.body
 
         const formData = await temporaryFormData.findById(id);
 
@@ -102,10 +105,21 @@ const approveFormData = async (req, res) => {
 
         await temporaryFormData.findByIdAndDelete(id);
 
-        return res.status(200).json({
-            message: "Form approved successfully",
-            data: wsuc
-        });
+        const reason = `Your form data have been approved by the ${ADMINNAME}`
+
+        // Sending email to the user in case of rejection
+        const info = await sendMessageToUser(reason, userEmail)
+
+        if (info) {
+            return res.status(200).json({
+                message: "Form approved successfully",
+                data: wsuc
+            });
+        } else {
+            return res.status(400).json({
+                err: "Something is wrong"
+            });
+        }
 
     } catch (error) {
         console.error(error);
@@ -122,7 +136,7 @@ const approveFormData = async (req, res) => {
 const rejectFormData = async (req, res) => {
     try {
         const { id } = req.params;
-        const { reason, AdminName, userEmail } = req.body;
+        const { reason, userEmail } = req.body;
 
         //Checking for userEmail
         if (!userEmail) {
@@ -140,7 +154,7 @@ const rejectFormData = async (req, res) => {
         form.Status = "Rejected";
 
         form.Review = {
-            Reviewed_By: AdminName,
+            Reviewed_By: ADMINNAME,
             Reviewed_At: new Date(),
             Rejection_Reason: reason
         };
