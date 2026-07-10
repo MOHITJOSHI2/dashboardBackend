@@ -54,8 +54,7 @@ exports.uploadFile = async (req, res) => {
             district,
             municipality,
             wardsCovered,
-            latitude,
-            longitude
+            geometry
         } = req.body;
 
         // Parse nested JSON objects safely
@@ -160,8 +159,9 @@ exports.uploadFile = async (req, res) => {
             },
 
             geometry: {
-                lat: latitude,
-                lng: longitude
+                coordinates: {
+                    geometry
+                },
             },
 
             Documents: {

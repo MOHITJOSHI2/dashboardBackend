@@ -106,6 +106,30 @@ const approveFormData = async (req, res) => {
             Master_Sheet: {
                 HH_Served: formData.Service_Coverage_Score?.KPI_2,
                 Total_HH: formData.Service_Coverage_Score?.KPI_3,
+                Scheme_Type: null,
+                Billed_Volume: formData.Adequacy_Score?.KPI_1,
+                Population_Served: formData.Adequacy_Score?.KPI_2,
+                Actual_LPCD: null,
+                Target_LPCD: null,
+                WQ_Testing: formData.Water_Quality_Score?.KPI_2,
+                WQ_EColi: formData.Water_Quality_Score?.KPI_3,
+                WQ_Arsenic: formData.Water_Quality_Score?.KPI_4,
+                Hours_of_Supply: formData.Reliability_Score?.KPI_2,
+                NRW_Logbook: formData.NRW_Score?.KPI_1,
+                NRW_Flow_Measurement: formData.NRW_Score?.KPI_2,
+                NRW_Reservoir_Scale: formData.NRW_Score?.KPI_3,
+                NRW_Flow_Meters: formData.NRW_Score?.KPI_5,
+                NRW_DMA: formData.NRW_Score?.KPI_6,
+                Expenditure: formData.OM_Score?.KPI_2,
+                Income: formData.OM_Score?.KPI_3,
+                Metered_Connections: null,
+                Total_Connections: null,
+                Metering_Pct: null,
+                Grievance_Logbook: formData.Grievance_Score?.KPI_1,
+                Grievance_Mechanism: formData.Grievance_Score?.KPI_2,
+                Category_Number: null,
+                Category_Level: null,
+                Project_Status: null
             }
         };
 
