@@ -1,6 +1,6 @@
 const WSUC = require('../../../models/operatorsModel/WSUC')
 const temporaryFormData = require('../../../models/formModel/temporaryFormModel');
-const sendMessageToUser = require('../../../functions/email/sendEmail');
+const { sendMessageToUser } = require('../../../functions/email/sendEmail');
 const {
     adequacyScore,
     grievanceAddressal,
@@ -88,7 +88,15 @@ const approveFormData = async (req, res) => {
 
         const indicators = getCalculatedValues(formData)
 
+        //Last Id of the last document
+        const lastWSUC = await WSUC.findOne()
+            .sort({ WSUC_ID: -1 })
+            .select("WSUC_ID");
+
+        const nextWSUCId = lastWSUC ? lastWSUC.WSUC_ID + 1 : 1;
+
         const wsucPayload = {
+            WSUC_ID: nextWSUCId,
             WSUC_Name: formData.WSUC_Name,
             Location: formData.Location,
             Service_Coverage_Prerequisite: formData.Service_Coverage_Score?.KPI_1,
@@ -101,14 +109,14 @@ const approveFormData = async (req, res) => {
             }
         };
 
-        const wsuc = await WSUC.create(wsucPayload);
+        const wsuc = await WSUC.insertOne(wsucPayload);
 
         await temporaryFormData.findByIdAndDelete(id);
 
         const reason = `Your form data have been approved by the ${ADMINNAME}`
 
         // Sending email to the user in case of rejection
-        const info = await sendMessageToUser(reason, userEmail)
+        const info = await sendMessageToUser(userEmail, reason)
 
         if (info) {
             return res.status(200).json({
@@ -163,7 +171,7 @@ const rejectFormData = async (req, res) => {
         await form.save();
 
         // Sending email to the user in case of rejection
-        const info = await sendMessageToUser(reason, userEmail)
+        const info = await sendMessageToUser(userEmail, reason)
         if (info) {
             return res.status(200).json({
                 message: "Form rejected successfully"
