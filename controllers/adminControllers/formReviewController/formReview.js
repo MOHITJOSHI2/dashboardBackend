@@ -133,7 +133,7 @@ const approveFormData = async (req, res) => {
             }
         };
 
-        const wsuc = await WSUC.insertOne(wsucPayload);
+        const wsuc = await new WSUC(wsucPayload).save();
 
         await temporaryFormData.findByIdAndDelete(id);
 
