@@ -183,18 +183,28 @@ const rejectFormData = async (req, res) => {
             });
         }
 
-        form.Status = "Rejected";
+        const deleteData = await temporaryFormData.deleteOne(id)
 
-        form.Review = {
-            Reviewed_By: ADMINNAME,
-            Reviewed_At: new Date(),
-            Rejection_Reason: reason
-        };
+        // form.Status = "Rejected";
+
+        // form.Review = {
+        //     Reviewed_By: ADMINNAME,
+        //     Reviewed_At: new Date(),
+        //     Rejection_Reason: reason
+        // };
 
         // Updating the form data in temporaryFormData
-        await form.save();
+        // await form.save();
 
         // Sending email to the user in case of rejection
+
+        if (!deleteData) {
+            return res.status(400).json({
+                message: "Error in deleting"
+            });
+
+        }
+
         const info = await sendMessageToUser(userEmail, reason)
         if (info) {
             return res.status(200).json({
