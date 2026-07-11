@@ -106,6 +106,12 @@ const temporaryFormSchema = new mongoose.Schema({
     },
 
     geometry: {
+        type: {
+            type: String,
+            enum: ["Polygon", "MultiPolygon"],
+            default: "Polygon",
+        },
+
         coordinates: {
             type: Array,
         },

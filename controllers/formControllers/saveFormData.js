@@ -162,9 +162,7 @@ exports.uploadFile = async (req, res) => {
             },
 
             geometry: {
-                coordinates: {
-                    geometryParsed
-                },
+                coordinates: geometryParsed.coordinates
             },
 
             Documents: {
