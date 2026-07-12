@@ -183,8 +183,9 @@ const rejectFormData = async (req, res) => {
             });
         }
 
-        const deleteData = await temporaryFormData.deleteOne(id)
+        const deleteData = await temporaryFormData.findByIdAndDelete(id);
 
+        //If we don not want to delete the data and just change the status to rejected.
         // form.Status = "Rejected";
 
         // form.Review = {
