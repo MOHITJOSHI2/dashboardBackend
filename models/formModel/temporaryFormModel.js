@@ -43,7 +43,9 @@ const temporaryFormSchema = new mongoose.Schema({
         KPI_1: { type: Number },
         KPI_1_Remark: { type: String },
         KPI_2: { type: Number },
-        KPI_2_Remark: { type: String }
+        KPI_2_Remark: { type: String },
+        KPI_3: { type: Number },
+        KPI_3_Remark: { type: String }
     },
 
     Water_Quality_Score: {

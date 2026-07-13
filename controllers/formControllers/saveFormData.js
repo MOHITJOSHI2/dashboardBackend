@@ -100,7 +100,9 @@ exports.uploadFile = async (req, res) => {
                 KPI_1: adequacy?.KPI_1 || null,
                 KPI_1_Remark: adequacy?.KPI_1_Remark || null,
                 KPI_2: adequacy?.KPI_2 || null,
-                KPI_2_Remark: adequacy?.KPI_2_Remark || null
+                KPI_2_Remark: adequacy?.KPI_2_Remark || null,
+                KPI_3: adequacy?.KPI_3 || null,
+                KPI_3_Remark: adequacy?.KPI_3_Remark || null
             },
 
             Water_Quality_Score: {
