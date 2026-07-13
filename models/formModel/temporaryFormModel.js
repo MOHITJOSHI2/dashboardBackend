@@ -40,7 +40,7 @@ const temporaryFormSchema = new mongoose.Schema({
     },
 
     Adequacy_Score: {
-        KPI_1: { type: Number },
+        KPI_1: { type: String },
         KPI_1_Remark: { type: String },
         KPI_2: { type: Number },
         KPI_2_Remark: { type: String },
