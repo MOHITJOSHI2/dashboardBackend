@@ -31,7 +31,7 @@ const adequacyScore = (adequacyData) => {
         return 0;
     }
 
-    const LPCD = (production * 1000) / (population * 30);
+    const LPCD = (production * 1000) / population;
 
     if (adequacyData.KPI_1 === "Pumped") {
         if (LPCD >= 100) return 1.0;
@@ -73,8 +73,8 @@ const reliabilityScore = (reliabilityData) => {
     // Reliability in percentage
     const rs = (hours / 24) * 100;
 
-    if (rs >= 100) return 1.0;
-    if (rs > 12.5) return (rs - 12.5) / 87.5;
+    if (rs >= 24) return 1.0;
+    if (rs >= 3) return (rs - 3) / 21;
     if (rs === 12.5) return 0.5;
 
     return 0;

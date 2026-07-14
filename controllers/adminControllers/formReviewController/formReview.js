@@ -27,15 +27,15 @@ const getCalculatedValues = (formData) => {
             adequacyScore(formData.Adequacy_Score),
 
         Water_Quality_Score:
-            waterQualityScore(formData.Water_Quality_Score),
+            formData.Adequacy_Score?.KPI_1 === "No"
+                ? 0
+                : waterQualityScore(formData.Water_Quality_Score),
 
         Reliability_Score:
             reliabilityScore(formData.Reliability_Score),
 
         NRW_Score:
-            formData.NRW_Score?.KPI_1 === "No"
-                ? 0
-                : nrwScore(formData.NRW_Score),
+            nrwScore(formData.NRW_Score),
 
         OM_Score:
             formData.OM_Score?.KPI_1 === "No"
