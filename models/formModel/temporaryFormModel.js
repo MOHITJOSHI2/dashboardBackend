@@ -140,9 +140,11 @@ const temporaryFormSchema = new mongoose.Schema({
             name: { type: String, default: null },
             path: { type: String, default: null }
         }
-    }
-
-
-})
+    },
+},
+    {
+        timestamps: true,
+    },
+)
 
 module.exports = mongoose.model('temporaryFormData', temporaryFormSchema)
