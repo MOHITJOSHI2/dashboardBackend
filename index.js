@@ -43,7 +43,8 @@ app.use(cors({
         'http://localhost:5174',
         'http://localhost:3001',
         'https://hilarious-manatee-0fb305.netlify.app',
-        'https://nwash-dashboard.netlify.app'
+        'https://nwash-dashboard.netlify.app',
+        'https://srims-dashboard.netlify.app'
     ],
     credentials: true
 }))
