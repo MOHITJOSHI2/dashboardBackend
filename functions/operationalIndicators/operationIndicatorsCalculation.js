@@ -73,9 +73,9 @@ const reliabilityScore = (reliabilityData) => {
     // Reliability in percentage
     const rs = (hours / 24) * 100;
 
-    if (rs >= 24) return 1.0;
-    if (rs >= 3) return (rs - 3) / 21;
-    if (rs === 12.5) return 0.5;
+    if (rs === 24) return 1.0;
+    if (rs >= 3) return (0.50 + ((rs - 3) / (24 - 3)) * (1 - 0.5))
+    if (rs < 3) return 0;
 
     return 0;
 };
