@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const path = require("path");
 require('dotenv').config({ quiet: true, path: path.resolve('../../', '.env') })
 
-const BUCKET = process.env.B2_BUCKET || 'srimsDashboard';
+const BUCKET = 'srimsDashboard';
 console.log(process.env.B2_BUCKET)
 // Uploads a single multer file (in-memory buffer) to B2.
 // Returns { name, path } where `path` is the object key stored in B2 —
