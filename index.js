@@ -16,6 +16,7 @@ const getWards = require('./routes/wardRoutes/wardRoutes')
 //Form Data
 const saveFormData = require('./routes/formRoutes/saveFormDataRoute')
 const getFormData = require('./routes/formRoutes/protectedGetFormDataRoutes')
+const fetchDocunets = require('./routes/formRoutes/getDocumentRoute')
 
 //Admin operations
 const adminLogin = require('./routes/adminRoutes/adminOperations/adminLoginRoutes')
@@ -61,7 +62,7 @@ app.use('/ward', getWards)
 app.use('/form', saveFormData)
 
 //Admin accessible route to fetch unapproved form Data
-app.use('/form', authenticateUsers, getFormData)
+app.use('/form', authenticateUsers, getFormData, fetchDocunets)
 
 //Admin Login Route
 app.use('/auth', adminLogin, adminLogout)
@@ -71,7 +72,6 @@ app.use('/admin', addAdmin)
 
 //Admin Approval or Reject form Data
 app.use('/admin', formApproval)
-
 
 //Server Running
 app.listen(process.env.PORT, () => {

@@ -1,34 +1,77 @@
 const temporaryFormData = require("../../models/formModel/temporaryFormModel");
-const fs = require("fs");
+const { PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const b2Client = require("../../connectors/b2Connector/b2Client");
+const crypto = require("crypto");
+const path = require("path");
+require('dotenv').config({ quiet: true, path: path.resolve('../../', '.env') })
 
-// Helper now takes `req` and the field name, and returns both name + path
-const getFileInfo = (req, fieldName) => {
-    const file = req.files?.[fieldName]?.[0];
+const BUCKET = process.env.B2_BUCKET;
 
-    if (!file) {
-        return { name: null, path: null };
-    }
+// Uploads a single multer file (in-memory buffer) to B2.
+// Returns { name, path } where `path` is the object key stored in B2 —
+// NOT a public URL. Use this key later to generate a signed URL for viewing.
+const uploadFileToB2 = async (file) => {
+    if (!file) return { name: null, path: null };
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const ext = path.extname(file.originalname).toLowerCase();
+    const key = `${year}/${month}/${crypto.randomUUID()}${ext}`;
+
+    await b2Client.send(
+        new PutObjectCommand({
+            Bucket: BUCKET,
+            Key: key,
+            Body: file.buffer,
+            ContentType: file.mimetype
+        })
+    );
 
     return {
         name: file.originalname,
-        // Store a relative path (not the absolute filesystem path)
-        // req.uploadFolder was set in the multer middleware, e.g. "2026/07"
-        path: `${req.uploadFolder}/${file.filename}`
+        path: key // store the object key — used later to fetch/sign the file
     };
 };
 
-// Cleanup helper: deletes any files multer already wrote to disk
-// Used when something fails after upload but before the DB save succeeds
-const cleanupUploadedFiles = (req) => {
-    if (!req.files) return;
+// Runs uploadFileToB2 for every configured document field.
+// Fields with no uploaded file resolve to { name: null, path: null }.
+const uploadAllDocuments = async (req) => {
+    const fieldNames = [
+        "Business_Plan",
+        "Lab_Report",
+        "Logbook_For_Pumping_Hours",
+        "Annual_Audit_Report",
+        "Logbook_For_Consumer_complaint"
+    ];
 
-    Object.values(req.files)
-        .flat()
-        .forEach((file) => {
-            fs.unlink(file.path, (err) => {
-                if (err) console.error("Failed to remove orphaned file:", file.path, err);
-            });
-        });
+    const entries = await Promise.all(
+        fieldNames.map(async (fieldName) => {
+            const file = req.files?.[fieldName]?.[0];
+            const info = await uploadFileToB2(file);
+            return [fieldName, info];
+        })
+    );
+
+    return Object.fromEntries(entries);
+};
+
+// Cleanup helper: deletes any files already uploaded to B2.
+// Used when the DB save fails after B2 upload succeeded, to avoid orphaned files.
+const cleanupUploadedFiles = async (documents) => {
+    if (!documents) return;
+
+    const deletions = Object.values(documents)
+        .filter((doc) => doc?.path)
+        .map((doc) =>
+            b2Client.send(
+                new DeleteObjectCommand({ Bucket: BUCKET, Key: doc.path })
+            ).catch((err) => {
+                console.error("Failed to remove orphaned B2 file:", doc.path, err);
+            })
+        );
+
+    await Promise.all(deletions);
 };
 
 // Safe JSON parse so malformed input doesn't produce a confusing error message
@@ -40,7 +83,9 @@ const safeParse = (val, fallback = {}) => {
     }
 };
 
-exports.uploadFile = async (req, res) => {
+exports.uploadFormData = async (req, res) => {
+    let uploadedDocuments = null;
+
     try {
 
         // Basic fields
@@ -67,8 +112,12 @@ exports.uploadFile = async (req, res) => {
         const metering_ratio = safeParse(req.body.metering_ratio);
         const grievances_addressal = safeParse(req.body.grievances_addressal);
 
-        //Geometry parsing
-        const geometryParsed = JSON.parse(geometry)
+        // Geometry parsing
+        const geometryParsed = safeParse(geometry, {});
+
+        // Upload all provided documents to B2 first.
+        // If this throws, nothing has been written to the DB yet.
+        uploadedDocuments = await uploadAllDocuments(req);
 
         const operatorData = {
             WSUC_Name: wsucName,
@@ -167,13 +216,7 @@ exports.uploadFile = async (req, res) => {
                 coordinates: geometryParsed.coordinates
             },
 
-            Documents: {
-                Business_Plan: getFileInfo(req, "Business_Plan"),
-                Lab_Report: getFileInfo(req, "Lab_Report"),
-                Logbook_For_Pumping_Hours: getFileInfo(req, "Logbook_For_Pumping_Hours"),
-                Annual_Audit_Report: getFileInfo(req, "Annual_Audit_Report"),
-                Logbook_For_Consumer_complaint: getFileInfo(req, "Logbook_For_Consumer_complaint")
-            }
+            Documents: uploadedDocuments
         };
 
         const saveData = await temporaryFormData.create(operatorData);
@@ -187,8 +230,8 @@ exports.uploadFile = async (req, res) => {
     } catch (error) {
         console.error(error);
 
-        // Remove any files multer already wrote to disk, since the DB save failed
-        cleanupUploadedFiles(req);
+        // Roll back any files already uploaded to B2 since the DB save failed
+        await cleanupUploadedFiles(uploadedDocuments);
 
         return res.status(500).json({
             success: false,

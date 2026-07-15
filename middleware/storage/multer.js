@@ -1,7 +1,4 @@
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
-const crypto = require("crypto");
 
 // Allowed file types
 const ALLOWED_MIME_TYPES = [
@@ -9,34 +6,9 @@ const ALLOWED_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 ];
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const now = new Date();
-
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-
-        // Save for later use in controller
-        req.uploadFolder = `${year}/${month}`;
-
-        const uploadPath = path.join(
-            __dirname,
-            "../../storage",
-            year.toString(),
-            month
-        );
-
-        fs.mkdirSync(uploadPath, { recursive: true });
-
-        cb(null, uploadPath);
-    },
-
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-
-        cb(null, `${crypto.randomUUID()}${ext}`);
-    }
-});
+// Keep files in memory as buffers instead of writing to local disk 
+// they'll be streamed straight to Backblaze B2 in the controller.
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
@@ -51,7 +23,7 @@ const upload = multer({
     fileFilter,
     limits: {
         fileSize: 10 * 1024 * 1024, // 10 MB
-        files: 10
+        files: 5
     }
 });
 
