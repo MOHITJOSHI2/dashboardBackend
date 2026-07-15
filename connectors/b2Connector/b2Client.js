@@ -2,6 +2,13 @@ const { S3Client } = require("@aws-sdk/client-s3");
 const path = require('path')
 require('dotenv').config({ quiet: true, path: path.resolve('../../', '.env') })
 
+console.log("B2 config check:", {
+    endpoint: process.env.B2_ENDPOINT,
+    region: process.env.B2_REGION,
+    keyId: process.env.B2_KEY_ID ? "set" : "MISSING",
+    appKey: process.env.B2_APPLICATION_KEY ? "set" : "MISSING"
+});
+
 const b2Client = new S3Client({
     endpoint: process.env.B2_ENDPOINT,
     region: process.env.B2_REGION,
