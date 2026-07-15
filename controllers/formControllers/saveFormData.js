@@ -232,6 +232,7 @@ exports.uploadFormData = async (req, res) => {
 
         // Roll back any files already uploaded to B2 since the DB save failed
         await cleanupUploadedFiles(uploadedDocuments);
+        console.log("Region at upload time:", b2Client.config.region);
 
         return res.status(500).json({
             success: false,
