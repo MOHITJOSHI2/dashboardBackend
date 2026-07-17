@@ -1,33 +1,65 @@
-const { GetObjectCommand, HeadObjectCommand } = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const b2Client = require("../../connectors/b2Connector/b2Client");
+const minioClient = require("../../connectors/minioConnector/minioClient");
 
-const BUCKET = 'srimsDashboard'
+const BUCKET = process.env.MINIO_BUCKET;
 
 const getDocuments = async (req, res) => {
     try {
         const { key } = req.query;
 
         if (!key) {
-            return res.status(400).json({ success: false, message: "Missing 'key' query param" });
+            return res.status(400).json({
+                success: false,
+                message: "Missing 'key' query parameter."
+            });
         }
 
-        // Confirm the object actually exists before generating a URL for it
+        // Check if object exists
+        let stat;
+
         try {
-            await b2Client.send(new HeadObjectCommand({ Bucket: BUCKET, Key: key }));
-        } catch (headError) {
-            return res.status(404).json({ success: false, message: "Document not found in storage" });
+            stat = await minioClient.statObject(BUCKET, key);
+        } catch (err) {
+            return res.status(404).json({
+                success: false,
+                message: "Document not found."
+            });
         }
 
-        const command = new GetObjectCommand({ Bucket: BUCKET, Key: key });
-        const url = await getSignedUrl(b2Client, command, { expiresIn: 300 });
+        // Get object stream
+        const stream = await minioClient.getObject(BUCKET, key);
 
-        return res.status(200).json({ success: true, url });
+        const contentType =
+            stat.metaData["content-type"] || "application/octet-stream";
+
+        const fileName = key.split("/").pop();
+
+        res.setHeader("Content-Type", contentType);
+
+        // View PDFs in browser, download everything else
+        if (contentType === "application/pdf") {
+            res.setHeader(
+                "Content-Disposition",
+                `inline; filename="${fileName}"`
+            );
+        } else {
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="${fileName}"`
+            );
+        }
+
+        stream.pipe(res);
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ success: false, message: error.message });
+
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 
-module.exports = { getDocuments }
+module.exports = {
+    getDocuments
+};

@@ -1,6 +1,6 @@
 const express = require("express");
 
-const uploadMiddleware = require("../../middleware/storage/multer");
+const uploadMiddleware = require("../../middleware/storage/saveDocument");
 const {
     uploadFormData
 } = require("../../controllers/formControllers/saveFormData");

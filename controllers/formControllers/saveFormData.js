@@ -1,42 +1,72 @@
 const temporaryFormData = require("../../models/formModel/temporaryFormModel");
-const { PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const b2Client = require("../../connectors/b2Connector/b2Client");
+const minioClient = require('../../connectors/minioConnector/minioClient')
+
 const crypto = require("crypto");
 const path = require("path");
+
 require('dotenv').config({ quiet: true, path: path.resolve('../../', '.env') })
 
-const BUCKET = 'srimsDashboard';
-console.log(process.env.B2_BUCKET)
-// Uploads a single multer file (in-memory buffer) to B2.
-// Returns { name, path } where `path` is the object key stored in B2 —
-// NOT a public URL. Use this key later to generate a signed URL for viewing.
-const uploadFileToB2 = async (file) => {
-    if (!file) return { name: null, path: null };
+const BUCKET = process.env.MINIO_BUCKET
+
+//minIO bucket creation if it doens;t already exists
+let bucketReady = false;
+
+const ensureBucketExists = async () => {
+
+    if (bucketReady) return;
+
+    const exists = await minioClient.bucketExists(BUCKET);
+
+    if (!exists) {
+
+        await minioClient.makeBucket(BUCKET);
+
+        console.log(`Created bucket: ${BUCKET}`);
+
+    }
+
+    bucketReady = true;
+
+};
+
+const uploadFileToMinio = async (file) => {
+    if (!file) {
+        return {
+            name: null,
+            path: null
+        };
+    }
 
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const ext = path.extname(file.originalname).toLowerCase();
-    const key = `${year}/${month}/${crypto.randomUUID()}${ext}`;
 
-    await b2Client.send(
-        new PutObjectCommand({
-            Bucket: BUCKET,
-            Key: key,
-            Body: file.buffer,
-            ContentType: file.mimetype
-        })
+    const year = now.getFullYear();
+
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    const objectName = `${year}/${month}/${crypto.randomUUID()}${ext}`;
+
+    await minioClient.putObject(
+        BUCKET,
+        objectName,
+        file.buffer,
+        file.size,
+        {
+            "Content-Type": file.mimetype
+        }
     );
 
     return {
         name: file.originalname,
-        path: key // store the object key — used later to fetch/sign the file
+        path: objectName
     };
 };
 
 // Runs uploadFileToB2 for every configured document field.
 // Fields with no uploaded file resolve to { name: null, path: null }.
 const uploadAllDocuments = async (req) => {
+
     const fieldNames = [
         "Business_Plan",
         "Lab_Report",
@@ -46,33 +76,56 @@ const uploadAllDocuments = async (req) => {
     ];
 
     const entries = await Promise.all(
+
         fieldNames.map(async (fieldName) => {
+
             const file = req.files?.[fieldName]?.[0];
-            const info = await uploadFileToB2(file);
+
+            const info = await uploadFileToMinio(file);
+
             return [fieldName, info];
+
         })
+
     );
 
     return Object.fromEntries(entries);
+
 };
 
 // Cleanup helper: deletes any files already uploaded to B2.
 // Used when the DB save fails after B2 upload succeeded, to avoid orphaned files.
 const cleanupUploadedFiles = async (documents) => {
+
     if (!documents) return;
 
     const deletions = Object.values(documents)
-        .filter((doc) => doc?.path)
-        .map((doc) =>
-            b2Client.send(
-                new DeleteObjectCommand({ Bucket: BUCKET, Key: doc.path })
-            ).catch((err) => {
-                console.error("Failed to remove orphaned B2 file:", doc.path, err);
-            })
-        );
+        .filter(doc => doc?.path)
+        .map(async (doc) => {
+
+            try {
+
+                await minioClient.removeObject(
+                    BUCKET,
+                    doc.path
+                );
+
+            } catch (err) {
+
+                console.error(
+                    "Failed to remove orphaned MinIO object:",
+                    doc.path,
+                    err
+                );
+
+            }
+
+        });
 
     await Promise.all(deletions);
+
 };
+
 
 // Safe JSON parse so malformed input doesn't produce a confusing error message
 const safeParse = (val, fallback = {}) => {
@@ -83,9 +136,10 @@ const safeParse = (val, fallback = {}) => {
     }
 };
 
+
 exports.uploadFormData = async (req, res) => {
     let uploadedDocuments = null;
-
+    await ensureBucketExists();
     try {
 
         // Basic fields
@@ -232,7 +286,6 @@ exports.uploadFormData = async (req, res) => {
 
         // Roll back any files already uploaded to B2 since the DB save failed
         await cleanupUploadedFiles(uploadedDocuments);
-        console.log("Region at upload time:", b2Client.config.region);
 
         return res.status(500).json({
             success: false,

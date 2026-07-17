@@ -52,19 +52,19 @@ app.use(cors({
 app.use(express.json())
 app.use(cookie())
 
-//Operator Routes
+//Operator or projects Routes
 app.use('/data', saveData, getData)
 
-//Wards Routes
+//Wards Route
 app.use('/ward', getWards)
 
 //Save formData Routes
 app.use('/form', saveFormData)
 
-//Admin accessible route to fetch unapproved form Data
+//Admin accessible route to fetch unapproved form Data and documents
 app.use('/form', authenticateUsers, getFormData, fetchDocunets)
 
-//Admin Login Route
+//Admin Login and logout Route
 app.use('/auth', adminLogin, adminLogout)
 
 //Add admin route
