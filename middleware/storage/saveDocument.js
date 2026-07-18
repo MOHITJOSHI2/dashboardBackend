@@ -7,7 +7,7 @@ const ALLOWED_MIME_TYPES = [
 ];
 
 // Keep files in memory as buffers instead of writing to local disk 
-// they'll be streamed straight to Backblaze B2 in the controller.
+// they'll be streamed straight to minio in the controller.
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {

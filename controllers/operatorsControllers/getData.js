@@ -1,4 +1,4 @@
-const WSUC = require('../../models/operatorsModel/WSUC')
+const WSUC = require('../../models/operatorsModel/operatorModel')
 
 const getData = async (req, res) => {
     try {

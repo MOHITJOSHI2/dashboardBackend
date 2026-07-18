@@ -1,4 +1,4 @@
-const WSUC = require('../../../models/operatorsModel/WSUC')
+const WSUC = require('../../../models/operatorsModel/operatorModel')
 const temporaryFormData = require('../../../models/formModel/temporaryFormModel');
 const { sendMessageToUser } = require('../../../functions/email/sendEmail');
 const {

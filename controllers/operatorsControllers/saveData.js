@@ -1,5 +1,5 @@
 const { extractData } = require('../../functions/dataExtractor.js')
-const WSUC = require('../../models/operatorsModel/WSUC.js')
+const WSUC = require('../../models/operatorsModel/operatorModel.js')
 
 const saveData = async (req, res) => {
     try {
