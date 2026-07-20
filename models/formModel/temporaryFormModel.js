@@ -5,14 +5,8 @@ const temporaryFormSchema = new mongoose.Schema({
 
     Status: {
         type: String,
-        enum: ["Pending", "Approved", "Rejected"],
+        enum: ["Pending"],
         default: "Pending"
-    },
-
-    Review: {
-        Reviewed_By: String,
-        Reviewed_At: Date,
-        Rejection_Reason: String
     },
 
     Operator_Info: {

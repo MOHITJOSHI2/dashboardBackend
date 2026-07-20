@@ -21,7 +21,6 @@ const ensureBucketExists = async () => {
 
         await minioClient.makeBucket(BUCKET);
 
-        console.log(`Created bucket: ${BUCKET}`);
 
     }
 
@@ -43,9 +42,11 @@ const uploadFileToMinio = async (file) => {
 
     const month = String(now.getMonth() + 1).padStart(2, "0");
 
+    const day = String(now.getDate()).padStart(2, "0");
+
     const ext = path.extname(file.originalname).toLowerCase();
 
-    const objectName = `${year}/${month}/${crypto.randomUUID()}${ext}`;
+    const objectName = `${year}/${month}/${day}/${crypto.randomUUID()}${ext}`;
 
     await minioClient.putObject(
         BUCKET,
