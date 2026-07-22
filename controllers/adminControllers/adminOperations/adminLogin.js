@@ -27,10 +27,10 @@ const adminLogin = async (req, res) => {
                 return res.status(200).json({ message: "Admin logged in successfully" })
 
             } else {
-                res.status(500).json({ err: "Server error" })
+                res.status(401).json({ err: "Invalid authorization" })
             }
         } else {
-            res.status(404).json({ err: "Cannot find user" })
+            res.status(401).json({ err: "Cannot find user" })
         }
 
     } catch (error) {
