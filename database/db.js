@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const path = require('path')
-require('dotenv').config({ quiet: true, path: path.resolve('../', '.env') })
+require('dotenv').config({ quiet: true })
 
 const connectDB = async () => {
     try {

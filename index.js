@@ -28,6 +28,12 @@ const addAdmin = require('./routes/adminRoutes/adminOperations/addAdminRoute')
 const formApproval = require('./routes/adminRoutes/formApprovalRoutes/formApprovalRoute')
 
 
+//Research Paper routes
+//This ave research paper route is only accessible by admin
+const saveResearchPaper = require('./routes/adminRoutes/saveResearchPaperRoute/saveResearchPaperRoute')
+const getResearchPaper = require('./routes/researchPaperRoutes/getResearchPaperRoute')
+
+
 // Library imports
 const express = require('express')
 const cors = require('cors')
@@ -61,8 +67,8 @@ app.use('/ward', getWards)
 //Save formData Routes
 app.use('/form', saveFormData)
 
-//Admin accessible route to fetch unapproved form Data and documents
-app.use('/form', authenticateUsers, getFormData, fetchDocunets)
+// Get research papers
+app.use('/research', getResearchPaper)
 
 //Admin Login and logout Route
 app.use('/auth', adminLogin, adminLogout)
@@ -70,8 +76,14 @@ app.use('/auth', adminLogin, adminLogout)
 //Add admin route
 app.use('/admin', addAdmin)
 
+//Admin accessible route to fetch unapproved form Data and documents
+app.use('/form', authenticateUsers, getFormData, fetchDocunets)
+
 //Admin Approval or Reject form Data
-app.use('/admin', formApproval)
+app.use('/admin', authenticateUsers, formApproval)
+
+// Admin acccessible save Research paper route
+app.use('/research', authenticateUsers, saveResearchPaper)
 
 //Server Running
 app.listen(process.env.PORT, () => {
